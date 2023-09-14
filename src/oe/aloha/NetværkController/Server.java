@@ -1,4 +1,4 @@
-package oe.aloha.Netværk;
+package oe.aloha.NetværkController;
 
 import
 
