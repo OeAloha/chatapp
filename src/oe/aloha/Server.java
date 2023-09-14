@@ -1,6 +1,6 @@
 package oe.aloha;
 
-public class Main {
+public class Server {
 	public static void main(String[] args) {
 		System.out.println("Hello world!");
 	}
