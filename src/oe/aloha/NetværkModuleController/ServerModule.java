@@ -1,12 +1,12 @@
-package oe.aloha.NetværkController;
+package oe.aloha.NetværkModuleController;
 
 import java.util.ArrayList;
 import oe.aloha.Entities.Session;
 
-public class Server {
+public class ServerModule {
 	private ArrayList<Session> sessions;
 
-	public Server() {
+	public ServerModule() {
 		sessions = new ArrayList<Session>();
 	}
 
