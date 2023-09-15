@@ -31,6 +31,18 @@ public class ServerModule implements Runnable {
 					while (true) {
 						Thread.sleep(10000);
 						sendPacket(new Ping(), null);
+						for (Session session : sessions) {
+							Thread timeoutThread = new Thread(() -> {
+								try {
+									Thread.sleep(10000);
+									removeSession(session);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							});
+							session.setTimeoutThread(timeoutThread);
+							timeoutThread.start();
+						}
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
