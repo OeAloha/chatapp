@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import oe.aloha.Entities.Packet;
 import oe.aloha.Entities.Session;
+import oe.aloha.Entities.packet.Disconnect;
 import oe.aloha.Entities.packet.Message;
 import oe.aloha.Entities.packet.Ping;
 import oe.aloha.Entities.packet.Pong;
@@ -120,6 +121,7 @@ public class ServerModule implements Runnable {
 		try {
 			serverSocket.close();
 			pingThread.interrupt();
+			sendPacket(new Disconnect(), null);
 			for (Session session : sessions) {
 				removeSession(session);
 			}
