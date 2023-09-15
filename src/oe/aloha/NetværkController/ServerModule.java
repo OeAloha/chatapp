@@ -1,4 +1,4 @@
-package oe.aloha.NetværkModuleController;
+package oe.aloha.NetværkController;
 
 import java.util.ArrayList;
 import oe.aloha.Entities.Session;
