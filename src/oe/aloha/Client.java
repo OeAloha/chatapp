@@ -11,8 +11,11 @@ public class Client {
 		Thread clientThread = new Thread(clientModule);
 		clientThread.start();
 
+
 		Scanner scanner = new Scanner(System.in);
 		String messageText = scanner.nextLine();
+
+
 
 		try {
 			clientModule.sendMessage(messageText);

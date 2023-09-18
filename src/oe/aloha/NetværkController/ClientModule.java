@@ -1,12 +1,18 @@
 package oe.aloha.NetværkController;
 
 import oe.aloha.Entities.Packet;
+import oe.aloha.Entities.PacketType;
 import oe.aloha.Entities.packet.Message;
+import oe.aloha.Entities.packet.Pong;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * Handles network communications for the Client. Runs in separate thread to
+ * allow ?
+ */
 public class ClientModule implements Runnable {
     private Socket socket;
     private ObjectInputStream input;
@@ -38,9 +44,28 @@ public class ClientModule implements Runnable {
     public void receiveMessage() {
         try {
             while (true) {
-                Packet response = (Packet) input.readObject();
-                System.out.println("Response from someone: " + response);
-                socket.close();
+
+
+                Packet packet = (Packet) input.readObject();
+                System.out.println(packet.getType());
+
+                switch(packet.getType()) {
+                    case MESSAGE:
+                        System.out.println("Response from someone: " + ((Message) packet).getMessage());
+
+                        break;
+                    case DISCONNECT:
+
+
+                        break;
+                    case PING:
+                        Pong pong = new Pong();
+                        output.writeObject(pong);
+
+                        break;
+                }
+
+
             }
         } catch (SocketException e) {
             System.out.println("Server is shutting down");
