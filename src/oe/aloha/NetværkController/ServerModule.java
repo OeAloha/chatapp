@@ -142,11 +142,12 @@ public class ServerModule implements Runnable {
 	 * @param senderId The id of the client that sent the packet.
 	 */
 	private void sendPacket(Packet packet, String senderId) {
-		for (Session session : sessions) {
+		for (int i = 0; i < sessions.size(); i++) {
+			Session session = sessions.get(i);
+			if (session.getId().equals(senderId)) {
+				continue;
+			}
 			try {
-				if (session.getId().equals(senderId)) {
-					continue;
-				}
 				session.getOos().writeObject(packet);
 			} catch (IOException e) {
 				removeSession(session);

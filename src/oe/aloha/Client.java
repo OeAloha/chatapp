@@ -1,4 +1,5 @@
 package oe.aloha;
+
 import oe.aloha.NetværkController.ClientModule;
 
 import java.io.IOException;
@@ -17,8 +18,8 @@ public class Client {
 			clientModule.sendMessage(messageText);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		} finally {
+			scanner.close();
 		}
-
-
 	}
 }
