@@ -4,6 +4,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * Represents a session with a client. Includes everything needed to shutdown
+ * the session.
+ */
 public class Session {
 	private String id;
 	private Socket socket;

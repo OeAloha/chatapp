@@ -14,18 +14,38 @@ import oe.aloha.Entities.packet.Ping;
 import oe.aloha.Entities.packet.Pong;
 import oe.aloha.Utils;
 
+/**
+ * Handles network communications for the Server. Runs in separate thread to
+ * allow console control.
+ */
 public class ServerModule implements Runnable {
+	/**
+	 * The ServerSocket used to accept new connections.
+	 */
 	private ServerSocket serverSocket;
+	/**
+	 * The list of active sessions.
+	 */
 	private ArrayList<Session> sessions;
+	/**
+	 * The thread used to send pings to clients. Used to automatically clean out
+	 * inactive sessions/non-compliant clients.
+	 */
 	private Thread pingThread;
 
 	public ServerModule() {
 		sessions = new ArrayList<Session>();
 	}
 
+	/**
+	 * Starts the server. Implements Runnable's run method.
+	 */
+	@Override
 	public void run() {
 		try {
 			serverSocket = new ServerSocket(8080);
+			// Start ping thread. Sends pings to clients every 10 seconds, then cleans out
+			// sessions that do not respond.
 			pingThread = new Thread(() -> {
 				try {
 					while (true) {
@@ -58,6 +78,14 @@ public class ServerModule implements Runnable {
 		}
 	}
 
+	/**
+	 * Adds a new session to the list of active sessions.
+	 * Creates input/output streams, and a separate thread to receive packets.
+	 * This ensures that the main server thread isn't blocked by waiting for
+	 * packets.
+	 * 
+	 * @param socket The socket used to communicate with the client.
+	 */
 	public void addSession(Socket socket) {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -69,6 +97,8 @@ public class ServerModule implements Runnable {
 						Packet packet = (Packet) ois.readObject();
 						switch (packet.getType()) {
 							case MESSAGE: {
+								// If the packet is a message, send it to all clients, with a prefix displaying
+								// the user's id.
 								Message message = new Message(session.getId() + ": " + ((Message) packet).getMessage());
 								sendPacket(message, session.getId());
 								break;
@@ -102,6 +132,12 @@ public class ServerModule implements Runnable {
 		}
 	}
 
+	/**
+	 * Sends a packet to all clients, except the one specified by senderId.
+	 * 
+	 * @param packet   The packet to send.
+	 * @param senderId The id of the client that sent the packet.
+	 */
 	private void sendPacket(Packet packet, String senderId) {
 		try {
 			for (Session session : sessions) {
@@ -115,6 +151,11 @@ public class ServerModule implements Runnable {
 		}
 	}
 
+	/**
+	 * Removes a session from the list of active sessions.
+	 * 
+	 * @param session The session to remove.
+	 */
 	public void removeSession(Session session) {
 		try {
 			session.getOis().close();
@@ -129,6 +170,9 @@ public class ServerModule implements Runnable {
 		}
 	}
 
+	/**
+	 * Closes the server socket, and cleans up all sessions.
+	 */
 	public void cleanup() {
 		try {
 			serverSocket.close();
@@ -142,6 +186,11 @@ public class ServerModule implements Runnable {
 		}
 	}
 
+	/**
+	 * Returns the number of active sessions.
+	 * 
+	 * @return The number of active sessions.
+	 */
 	public int size() {
 		return sessions.size();
 	}

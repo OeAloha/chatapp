@@ -1,5 +1,8 @@
 package oe.aloha;
 
+/**
+ * Utility class. All methods should be static.
+ */
 public class Utils {
 	private static char randOf(String chars) {
 		return chars.charAt((int) Math.floor(Math.random() * chars.length()));
@@ -13,6 +16,11 @@ public class Utils {
 		return randOf("bcdfghjklmnpqrstvwxyz");
 	}
 
+	/**
+	 * Generates a random phonetic ID, like "zaxituzagi"
+	 * 
+	 * @return A random phonetic ID.
+	 */
 	public static String phoneticId() {
 		String id = "";
 		int start = (int) Math.round(Math.random());
