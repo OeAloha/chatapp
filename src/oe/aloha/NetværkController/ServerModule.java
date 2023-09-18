@@ -108,6 +108,9 @@ public class ServerModule implements Runnable {
 				try {
 					while (true) {
 						Packet packet = (Packet) ois.readObject();
+						if (debug) {
+							System.out.println("Received packet of type " + packet.getType() + " from session " + session.getId());
+						}
 						switch (packet.getType()) {
 							case MESSAGE: {
 								// If the packet is a message, send it to all clients, with a prefix displaying
