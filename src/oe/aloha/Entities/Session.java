@@ -31,7 +31,14 @@ public class Session {
 		this.timeoutThread = timeoutThread;
 	}
 
-	public void clearTimeoutThread() {
+	public void clearTimeoutThread(boolean debug, String session) {
+		if (debug) {
+			if (timeoutThread == null) {
+				System.out.println("Timeout not found");
+			} else {
+				System.out.println("Timeout found for session " + session);
+			}
+		}
 		if (timeoutThread != null) {
 			timeoutThread.interrupt();
 			timeoutThread = null;

@@ -64,9 +64,15 @@ public class ServerModule implements Runnable {
 						try {
 							Thread.sleep(10000);
 						} catch (InterruptedException e) {
+							return;
+						}
+						if (Thread.interrupted()) {
+							return;
 						}
 						if (debug) {
-							System.out.println("Session " + session.getId() + " timed out.");
+							System.out
+									.println("Session " + session.getId() + " timed out, and is " + (Thread.interrupted() ? "" : "not ")
+											+ "interrupted.");
 						}
 						removeSession(session);
 					});
@@ -132,7 +138,7 @@ public class ServerModule implements Runnable {
 								break;
 							}
 							case PONG: {
-								session.clearTimeoutThread();
+								session.clearTimeoutThread(debug, session.getId());
 								break;
 							}
 						}
@@ -206,7 +212,7 @@ public class ServerModule implements Runnable {
 		}
 
 		session.getReadThread().interrupt();
-		session.clearTimeoutThread();
+		session.clearTimeoutThread(debug, session.getId());
 		sessions.remove(session);
 	}
 
