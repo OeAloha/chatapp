@@ -32,8 +32,10 @@ public class Session {
 	}
 
 	public void clearTimeoutThread() {
-		timeoutThread.interrupt();
-		timeoutThread = null;
+		if (timeoutThread != null) {
+			timeoutThread.interrupt();
+			timeoutThread = null;
+		}
 	}
 
 	public void setReadThread(Thread readThread) {
