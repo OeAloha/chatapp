@@ -44,37 +44,38 @@ public class ServerModule implements Runnable {
 	public void run() {
 		try {
 			serverSocket = new ServerSocket(8080);
-			// Start ping thread. Sends pings to clients every 10 seconds, then cleans out
-			// sessions that do not respond.
-			pingThread = new Thread(() -> {
-				try {
-					while (true) {
-						Thread.sleep(10000);
-						sendPacket(new Ping(), null);
-						for (Session session : sessions) {
-							Thread timeoutThread = new Thread(() -> {
-								try {
-									Thread.sleep(10000);
-									removeSession(session);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-							});
-							session.setTimeoutThread(timeoutThread);
-							timeoutThread.start();
-						}
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			});
-			pingThread.start();
+		} catch (IOException e) {
+		}
+		// Start ping thread. Sends pings to clients every 10 seconds, then cleans out
+		// sessions that do not respond.
+		pingThread = new Thread(() -> {
 			while (true) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+				}
+				sendPacket(new Ping(), null);
+				for (Session session : sessions) {
+					Thread timeoutThread = new Thread(() -> {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+						}
+						removeSession(session);
+					});
+					session.setTimeoutThread(timeoutThread);
+					timeoutThread.start();
+				}
+			}
+
+		});
+		pingThread.start();
+		while (true) {
+			try {
 				Socket socket = serverSocket.accept();
 				addSession(socket);
+			} catch (IOException e) {
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -119,16 +120,18 @@ public class ServerModule implements Runnable {
 						}
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					removeSession(session);
 				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+					System.out
+							.println(
+									"Class Not Found Exception Captured. Ensure that the client is running same Packet Entity Protocol.");
+					removeSession(session);
 				}
 			});
 			session.setReadThread(thread);
 			sessions.add(session);
 			session.getReadThread().start();
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -139,15 +142,15 @@ public class ServerModule implements Runnable {
 	 * @param senderId The id of the client that sent the packet.
 	 */
 	private void sendPacket(Packet packet, String senderId) {
-		try {
-			for (Session session : sessions) {
+		for (Session session : sessions) {
+			try {
 				if (session.getId().equals(senderId)) {
 					continue;
 				}
 				session.getOos().writeObject(packet);
+			} catch (IOException e) {
+				removeSession(session);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -159,15 +162,20 @@ public class ServerModule implements Runnable {
 	public void removeSession(Session session) {
 		try {
 			session.getOis().close();
-			session.getOos().close();
-			session.getSocket().close();
-			session.getReadThread().interrupt();
-			session.clearTimeoutThread();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			sessions.remove(session);
 		}
+		try {
+			session.getOos().close();
+		} catch (IOException e) {
+		}
+		try {
+			session.getSocket().close();
+		} catch (IOException e) {
+		}
+
+		session.getReadThread().interrupt();
+		session.clearTimeoutThread();
+		sessions.remove(session);
 	}
 
 	/**
@@ -176,13 +184,12 @@ public class ServerModule implements Runnable {
 	public void cleanup() {
 		try {
 			serverSocket.close();
-			pingThread.interrupt();
-			sendPacket(new Disconnect(), null);
-			for (Session session : sessions) {
-				removeSession(session);
-			}
 		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		pingThread.interrupt();
+		sendPacket(new Disconnect(), null);
+		for (Session session : sessions) {
+			removeSession(session);
 		}
 	}
 
