@@ -45,7 +45,7 @@ public class ClientModule implements Runnable {
 			while (true) {
 
 				Packet packet = (Packet) input.readObject();
-				System.out.println(packet.getType());
+				//System.out.println(packet.getType());
 
 				switch (packet.getType()) {
 					case MESSAGE:

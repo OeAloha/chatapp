@@ -1,5 +1,8 @@
 package oe.aloha;
 
+import oe.aloha.Entities.Packet;
+import oe.aloha.Entities.packet.Message;
+import oe.aloha.Entities.packet.Pong;
 import oe.aloha.NetværkController.ClientModule;
 
 import java.io.IOException;
@@ -11,18 +14,16 @@ public class Client {
 		Thread clientThread = new Thread(clientModule);
 		clientThread.start();
 
+		while(true){
+			Scanner scanner = new Scanner(System.in);
+			String messageText = scanner.nextLine();
 
-		Scanner scanner = new Scanner(System.in);
-		String messageText = scanner.nextLine();
-
-
-
-		try {
-			clientModule.sendMessage(messageText);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			scanner.close();
+			try {
+				clientModule.sendMessage(messageText);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }
+
