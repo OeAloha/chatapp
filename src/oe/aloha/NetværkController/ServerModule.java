@@ -162,6 +162,10 @@ public class ServerModule implements Runnable {
 	 */
 	public void removeSession(Session session) {
 		try {
+			session.getOos().writeObject(new Disconnect());
+		} catch (IOException e) {
+		}
+		try {
 			session.getOis().close();
 		} catch (IOException e) {
 		}
