@@ -9,20 +9,23 @@ import java.net.Socket;
 import java.net.SocketException;
 
 /**
- * Handles network communications for the Client. Runs in separate thread to
- * allow ?
+ * Handles network communications for the Client.
+ * Runs in separate thread, so it doesn't block the main program's execution and allows console control.
  */
 public class ClientModule implements Runnable {
 	private Socket socket;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
-
 	private boolean debug;
 
 	public ClientModule() {
 
 	}
 
+	/**
+	 * Starts the client. Implements Runnable's run method.
+	 * Creates a socket to connect to the server and Input/output streams to receive and send data to the server.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -30,7 +33,7 @@ public class ClientModule implements Runnable {
 			output = new ObjectOutputStream(socket.getOutputStream());
 			input = new ObjectInputStream(socket.getInputStream());
 
-			receiveMessage();
+			receivePacket();
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -42,7 +45,11 @@ public class ClientModule implements Runnable {
 		output.writeObject(message);
 	}
 
-	public void receiveMessage() {
+	/**
+	 * This method is supposed to handle recieved packeges from the server,
+	 * then checks what type and perform action based on the type.
+	 */
+	public void receivePacket() {
 		try {
 			while (true) {
 				Packet packet = (Packet) input.readObject();
@@ -64,7 +71,6 @@ public class ClientModule implements Runnable {
 					case PONG:
 						break;
 				}
-
 			}
 		} catch (SocketException e) {
 			System.out.println("Server is shutting down");

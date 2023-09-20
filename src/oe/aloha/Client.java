@@ -7,13 +7,16 @@ import java.util.Scanner;
 
 public class Client {
 	public static void main(String[] args) {
+		System.out.println("Welcome to the chat! You can write to other people that is connected.");
 		ClientModule clientModule = new ClientModule();
 		Thread clientThread = new Thread(clientModule);
 		clientThread.start();
 
+		System.out.println("Use exit to exit the chat.");
+
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			String messageText = scanner.nextLine();
+			String messageText = scanner.nextLine().trim();
 
 			switch (messageText) {
 				case "debug": {
@@ -22,17 +25,20 @@ public class Client {
 					break;
 				}
 				case "exit": {
-					System.out.println("Exiting Client...");
+					System.out.println("Exiting Chat...");
 					scanner.close();
 					System.exit(0);
 					break;
 				}
-			}
-
-			try {
-				clientModule.sendMessage(messageText);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
+				default: {
+					if (!messageText.isEmpty()) {
+						try {
+							clientModule.sendMessage(messageText);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}
 			}
 		}
 	}
