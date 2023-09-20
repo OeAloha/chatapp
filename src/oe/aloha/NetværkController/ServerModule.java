@@ -58,7 +58,7 @@ public class ServerModule implements Runnable {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 				}
-				sendPacket(new Ping(), null);
+				System.out.println("Sent PING to all clients.");
 				for (Session session : sessions) {
 					Thread timeoutThread = new Thread(() -> {
 						try {
@@ -76,9 +76,11 @@ public class ServerModule implements Runnable {
 						}
 						removeSession(session);
 					});
+					System.out.println("Set TimeoutThread for session " + session.getId() + ".");
 					session.setTimeoutThread(timeoutThread);
 					timeoutThread.start();
 				}
+				sendPacket(new Ping(), null);
 			}
 
 		});
