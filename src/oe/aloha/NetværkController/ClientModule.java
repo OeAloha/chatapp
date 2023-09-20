@@ -17,6 +17,8 @@ public class ClientModule implements Runnable {
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 
+	private boolean debug;
+
 	public ClientModule() {
 
 	}
@@ -43,9 +45,11 @@ public class ClientModule implements Runnable {
 	public void receiveMessage() {
 		try {
 			while (true) {
-
 				Packet packet = (Packet) input.readObject();
-				// System.out.println(packet.getType());
+
+				if(debug){
+					System.out.println(packet.getType());
+				}
 
 				switch (packet.getType()) {
 					case MESSAGE:
@@ -69,5 +73,10 @@ public class ClientModule implements Runnable {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public boolean toggleDebug() {
+		debug = !debug;
+		return debug;
 	}
 }

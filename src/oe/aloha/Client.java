@@ -11,9 +11,23 @@ public class Client {
 		Thread clientThread = new Thread(clientModule);
 		clientThread.start();
 
+		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			Scanner scanner = new Scanner(System.in);
 			String messageText = scanner.nextLine();
+
+			switch (messageText) {
+				case "debug": {
+					boolean debugMode = clientModule.toggleDebug();
+					System.out.println("Debug mode is now " + (debugMode ? "on" : "off") + ".");
+					break;
+				}
+				case "exit": {
+					System.out.println("Exiting Client...");
+					scanner.close();
+					System.exit(0);
+					break;
+				}
+			}
 
 			try {
 				clientModule.sendMessage(messageText);
