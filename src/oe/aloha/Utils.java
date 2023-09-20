@@ -26,6 +26,9 @@ public class Utils {
 		int start = (int) Math.round(Math.random());
 		for (int i = 0; i < 10; i++) {
 			id += (i % 2 == start) ? randConsonant() : randVowel();
+			if (i == 0) {
+				id = id.toUpperCase();
+			}
 		}
 		return id;
 	}

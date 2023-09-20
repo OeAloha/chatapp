@@ -45,20 +45,19 @@ public class ClientModule implements Runnable {
 			while (true) {
 
 				Packet packet = (Packet) input.readObject();
-				//System.out.println(packet.getType());
+				// System.out.println(packet.getType());
 
 				switch (packet.getType()) {
 					case MESSAGE:
-						System.out.println("Response from someone: " + ((Message) packet).getMessage());
-
+						System.out.println(((Message) packet).getMessage());
 						break;
 					case DISCONNECT:
-
 						break;
 					case PING:
 						Pong pong = new Pong();
 						output.writeObject(pong);
-
+						break;
+					case PONG:
 						break;
 				}
 
