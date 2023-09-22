@@ -4,6 +4,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import oe.aloha.Utils;
+
 /**
  * Represents a session with a client. Includes everything needed to shutdown
  * the session.
@@ -34,9 +36,9 @@ public class Session {
 	public void clearTimeoutThread(boolean debug, String session) {
 		if (debug) {
 			if (timeoutThread == null) {
-				System.out.println("Timeout not found");
+				Utils.safeLog("Timeout not found");
 			} else {
-				System.out.println("Timeout found for session " + session);
+				Utils.safeLog("Timeout found for session " + session);
 			}
 		}
 		if (timeoutThread != null) {

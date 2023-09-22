@@ -58,7 +58,7 @@ public class ServerModule implements Runnable {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 				}
-				System.out.println("Sent PING to all clients.");
+				Utils.safeLog("Sent PING to all clients.");
 				for (Session session : sessions) {
 					Thread timeoutThread = new Thread(() -> {
 						try {
@@ -70,13 +70,12 @@ public class ServerModule implements Runnable {
 							return;
 						}
 						if (debug) {
-							System.out
-									.println("Session " + session.getId() + " timed out, and is " + (Thread.interrupted() ? "" : "not ")
-											+ "interrupted.");
+							Utils.safeLog("Session " + session.getId() + " timed out, and is " + (Thread.interrupted() ? "" : "not ")
+									+ "interrupted.");
 						}
 						removeSession(session);
 					});
-					System.out.println("Set TimeoutThread for session " + session.getId() + ".");
+					Utils.safeLog("Set TimeoutThread for session " + session.getId() + ".");
 					session.setTimeoutThread(timeoutThread);
 					timeoutThread.start();
 				}
@@ -117,7 +116,7 @@ public class ServerModule implements Runnable {
 					while (true) {
 						Packet packet = (Packet) ois.readObject();
 						if (debug) {
-							System.out.println("Received packet of type " + packet.getType() + " from session " + session.getId());
+							Utils.safeLog("Received packet of type " + packet.getType() + " from session " + session.getId());
 						}
 						switch (packet.getType()) {
 							case MESSAGE: {
@@ -129,7 +128,7 @@ public class ServerModule implements Runnable {
 							}
 							case DISCONNECT: {
 								if (debug) {
-									System.out.println("Session " + session.getId() + " sent disconnect message.");
+									Utils.safeLog("Session " + session.getId() + " sent disconnect message.");
 								}
 								removeSession(session);
 								break;
@@ -147,14 +146,13 @@ public class ServerModule implements Runnable {
 					}
 				} catch (IOException e) {
 					if (debug) {
-						System.out.println("Session " + session.getId() + " disconnected without explicit Disconnect Packet.");
+						Utils.safeLog("Session " + session.getId() + " disconnected without explicit Disconnect Packet.");
 					}
 					removeSession(session);
 				} catch (ClassNotFoundException e) {
 					if (debug) {
-						System.out
-								.println(
-										"Class Not Found Exception Captured. Ensure that the client is running same Packet Entity Protocol.");
+						Utils.safeLog(
+								"Class Not Found Exception Captured. Ensure that the client is running same Packet Entity Protocol.");
 					}
 					removeSession(session);
 				}
@@ -182,7 +180,7 @@ public class ServerModule implements Runnable {
 				session.getOos().writeObject(packet);
 			} catch (IOException e) {
 				if (debug) {
-					System.out.println(
+					Utils.safeLog(
 							"Session " + session.getId() + " disconnected without explicit Disconnect Packet when sending packet.");
 				}
 				removeSession(session);
@@ -229,7 +227,7 @@ public class ServerModule implements Runnable {
 		pingThread.interrupt();
 		sendPacket(new Disconnect(), null);
 		if (debug) {
-			System.out.println("Cleaning up " + sessions.size() + " sessions.");
+			Utils.safeLog("Cleaning up " + sessions.size() + " sessions.");
 		}
 		for (Session session : sessions) {
 			removeSession(session);

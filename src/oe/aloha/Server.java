@@ -10,8 +10,9 @@ public class Server {
 		Thread serverThread = new Thread(serverModule);
 		serverThread.start();
 		System.out.println(
-				"Server has now started! Use num to get the number of connected clients, and exit to exit the server.");
+				"Server has now started! Use num to get the number of connected clients, clear to clear the console, and exit to exit the server.");
 		Scanner scanner = new Scanner(System.in);
+		Utils.addScanner(scanner);
 		while (true) {
 			System.out.print("> ");
 			String input = scanner.nextLine();
@@ -23,6 +24,11 @@ public class Server {
 				case "debug": {
 					boolean debugMode = serverModule.toggleDebug();
 					System.out.println("Debug mode is now " + (debugMode ? "on" : "off") + ".");
+					break;
+				}
+				case "clear": {
+					System.out.print("\033[H\033[2J");
+					System.out.flush();
 					break;
 				}
 				case "exit": {
