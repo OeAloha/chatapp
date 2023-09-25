@@ -58,9 +58,7 @@ public class ServerModule implements Runnable {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 				}
-				if (debug) {
-					Utils.safeLog("Sent PING to all clients.");
-				}
+				Utils.safeLog("Sent PING to all clients.");
 				for (Session session : sessions) {
 					Thread timeoutThread = new Thread(() -> {
 						try {
