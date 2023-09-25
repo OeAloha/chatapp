@@ -16,10 +16,11 @@ public class ClientModule implements Runnable {
 	private Socket socket;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
+	private PrintStream printer;
 	private boolean debug;
 
-	public ClientModule() {
-
+	public ClientModule(PrintStream printer) {
+		this.printer = printer;
 	}
 
 	/**
@@ -55,12 +56,12 @@ public class ClientModule implements Runnable {
 				Packet packet = (Packet) input.readObject();
 
 				if(debug){
-					System.out.println(packet.getType());
+					printer.println(packet.getType());
 				}
 
 				switch (packet.getType()) {
 					case MESSAGE:
-						System.out.println(((Message) packet).getMessage());
+						printer.println(((Message) packet).getMessage());
 						break;
 					case DISCONNECT:
 						break;
@@ -73,7 +74,7 @@ public class ClientModule implements Runnable {
 				}
 			}
 		} catch (SocketException e) {
-			System.out.println("Server is shutting down");
+			printer.println("Server is shutting down");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

@@ -9,14 +9,14 @@ import java.util.Scanner;
 
 public class Client {
 
-	public static void start(InputStream in, PrintStream print) {
-		print.println("Welcome to the chat! You can write to other people that is connected.");
+	public static void start(InputStream in, PrintStream printer) {
+		printer.println("Welcome to the chat! You can write to other people that is connected.");
 
-		ClientModule clientModule = new ClientModule(print);
+		ClientModule clientModule = new ClientModule(printer);
 		Thread clientThread = new Thread(clientModule);
 		clientThread.start();
 
-		print.println("Use exit to exit the chat.");
+		printer.println("Use exit to exit the chat.");
 
 		Scanner scanner = new Scanner(in);
 
@@ -26,11 +26,11 @@ public class Client {
 			switch (messageText) {
 				case "debug": {
 					boolean debugMode = clientModule.toggleDebug();
-					System.out.println("Debug mode is now " + (debugMode ? "on" : "off") + ".");
+					printer.println("Debug mode is now " + (debugMode ? "on" : "off") + ".");
 					break;
 				}
 				case "exit": {
-					System.out.println("Exiting Chat...");
+					printer.println("Exiting Chat...");
 					scanner.close();
 					System.exit(0);
 					break;
@@ -46,10 +46,7 @@ public class Client {
 				}
 			}
 		}
-
-
-
-		}
+	}
 
 
 	public static void main(String[] args) {
